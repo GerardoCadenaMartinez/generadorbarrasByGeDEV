@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generador de Código de Barras By Gerardo Cadena</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <style>
+    body{font-family:Arial;text-align:center;padding:20px}input,button{padding:10px;margin:10px;font-size:16px}canvas{background:#fff;border:1px solid #ccc}
+  </style>
+</head>
+<body oncontextmenu="return false">
+  <h2>Generador de Código de Barras By Gerardo Cadena</h2>
+  <input type="text" id="codigo" placeholder="Ingresa letras o números">
+  <br>
+  <canvas id="barcodeCanvas" width="400" height="150"></canvas>
+  <br>
+  <button id="btnGenerar">Generar</button>
+  <button id="btnDescargar">Descargar</button>
+  <script>
+    window.onload=()=>{const a=document.getElementById("btnGenerar"),b=document.getElementById("btnDescargar"),c=document.getElementById("codigo"),d=document.getElementById("barcodeCanvas");a.addEventListener("click",()=>{const a=c.value.toUpperCase();if(!a)return alert("Por favor, escribe un código.");d.getContext("2d").clearRect(0,0,d.width,d.height),JsBarcode(d,a,{format:"CODE39",displayValue:!0,fontSize:18,height:80,margin:10})}),b.addEventListener("click",()=>{const a=document.createElement("a");a.download="codigo_barra.png",a.href=d.toDataURL("image/png"),a.click()})};
+    document.addEventListener("keydown",e=>{if(e.key==="F12"||(e.ctrlKey&&e.shiftKey&&["I","J","C"].includes(e.key)))e.preventDefault()});
+  </script>
+</body>
+</html>
