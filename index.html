@@ -76,9 +76,17 @@
             bc = document.getElementById("bc"),
             qr = document.getElementById("qr");
 
-      // Convierte a mayúsculas mientras escribes
+      // Función para limpiar texto: quita acentos y cambia ñ por n
+      function limpiarTexto(texto) {
+        return texto.normalize("NFD")                // Descompone acentos
+                    .replace(/[\u0300-\u036f]/g, "") // Elimina acentos
+                    .replace(/ñ/g, "n")
+                    .replace(/Ñ/g, "N");
+      }
+
+      // Convierte a mayúsculas mientras escribes y limpia ñ/acento
       v.addEventListener('input', () => {
-        v.value = v.value.toUpperCase();
+        v.value = limpiarTexto(v.value).toUpperCase();
       });
 
       t.onchange = () => {
@@ -99,19 +107,18 @@
           return;
         }
 
+        val = limpiarTexto(val).toUpperCase();
+
         if (t.value === "barcode") {
           const code39Regex = /^[A-Z0-9 \-\.\$\/\+\%]+$/;
-          if (!code39Regex.test(val.toUpperCase())) {
+          if (!code39Regex.test(val)) {
             alert("ERROR: CODE39 solo admite A-Z, 0-9, espacio y - . $ / + %");
             return;
           }
 
-          val = val.toUpperCase();
-
           bc.style.display = "block";
           qr.style.display = "none";
 
-          // Limpiar canvas antes de dibujar nuevo código
           const ctx = bc.getContext("2d");
           ctx.clearRect(0, 0, bc.width, bc.height);
 
