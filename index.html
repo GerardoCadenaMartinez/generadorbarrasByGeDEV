@@ -93,19 +93,20 @@
       };
 
       g.onclick = () => {
-        let val = v.value.trim();
-        if (!val) {
+        let val = v.value; // No usamos trim para no eliminar espacios intermedios
+        if (!val.trim()) {
           alert("Por favor, escribe un código.");
           return;
         }
 
         if (t.value === "barcode") {
-          // Ya es mayúscula por el input listener
           const code39Regex = /^[A-Z0-9 \-\.\$\/\+\%]+$/;
-          if (!code39Regex.test(val)) {
+          if (!code39Regex.test(val.toUpperCase())) {
             alert("ERROR: CODE39 solo admite A-Z, 0-9, espacio y - . $ / + %");
             return;
           }
+
+          val = val.toUpperCase();
 
           bc.style.display = "block";
           qr.style.display = "none";
