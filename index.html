@@ -1,1 +1,170 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Generador Código Barras y QR</title><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script><script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script><style>body{font-family:Arial,sans-serif;text-align:center;padding:20px;background:#121212;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}h2{margin-bottom:20px}select,input,button{padding:12px;margin:10px 5px;font-size:18px;border-radius:6px;border:none;outline:none}input,select{width:250px;max-width:90vw}button{background:#1db954;color:#fff;font-weight:700;cursor:pointer;width:140px;transition:background .3s ease;user-select:none}button:hover{background:#1ed760}canvas{background:#fff;border-radius:12px;box-shadow:0 0 8px #1db954aa;margin:20px auto;display:block;max-width:90vw;height:auto}</style></head><body oncontextmenu="return false"><h2>Generador Código Barras y QR - By Gerardo Cadena</h2><select id="t"><option value="barcode">Código Barras (CODE39)</option><option value="qr">Código QR</option></select><br/><input type="text" id="v" placeholder="Ingresa letras o números" autocomplete="off" autocorrect="off" autocapitalize="characters"/><br/><canvas id="bc" width="400" height="150"></canvas><canvas id="qr" width="200" height="200" style="display:none"></canvas><br/><button id="g">Generar</button><button id="d">Descargar</button><script>window.onload=()=>{const t=document.getElementById("t"),v=document.getElementById("v"),g=document.getElementById("g"),d=document.getElementById("d"),bc=document.getElementById("bc"),qr=document.getElementById("qr");t.onchange=()=>{v.value="";if(t.value==="barcode"){bc.style.display="block";qr.style.display="none"}else{bc.style.display="none";qr.style.display="block"}};g.onclick=()=>{const val=v.value.trim().toUpperCase();if(!val)return alert("Por favor, escribe un código.");if(t.value==="barcode"){bc.style.display="block";qr.style.display="none";const ctx=bc.getContext("2d");ctx.clearRect(0,0,bc.width,bc.height);JsBarcode(bc,val,{format:"CODE39",displayValue:true,fontSize:18,height:80,margin:10})}else{bc.style.display="none";qr.style.display="block";qr.width=200;qr.height=200;const ctx=qr.getContext("2d");ctx.clearRect(0,0,qr.width,qr.height);QRCode.toCanvas(qr,val,{width:200,margin:2,color:{dark:"#000",light:"#fff"}},e=>{if(e)alert("Error generando QR: "+e)})}};d.onclick=()=>{const c=t.value==="barcode"?bc:qr;if(!c)return alert("No hay código generado para descargar.");const a=document.createElement("a");a.download=t.value==="barcode"?"codigo_barras.png":"codigo_qr.png";a.href=c.toDataURL("image/png");a.click()}};document.onkeydown=e=>{if(e.key==="F12"||(e.ctrlKey&&e.shiftKey&&["I","J","C"].includes(e.key)))e.preventDefault()};</script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Generador Código Barras y QR</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background: #121212;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    h2 { margin-bottom: 20px; }
+    select, input, button {
+      padding: 12px;
+      margin: 10px 5px;
+      font-size: 18px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+    input, select {
+      width: 250px;
+      max-width: 90vw;
+    }
+    button {
+      background: #1db954;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      width: 140px;
+      transition: background .3s ease;
+      user-select: none;
+    }
+    button:hover { background: #1ed760; }
+    canvas {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 8px #1db954aa;
+      margin: 20px auto;
+      display: block;
+      max-width: 90vw;
+      height: auto;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+  <h2>Generador Código Barras y QR - By Gerardo Cadena</h2>
+  <select id="t">
+    <option value="barcode">Código Barras (CODE39)</option>
+    <option value="qr">Código QR</option>
+  </select><br/>
+  <input type="text" id="v" placeholder="Ingresa letras o números" autocomplete="off" autocorrect="off" autocapitalize="characters" /><br/>
+  
+  <div id="barcodeContainer">
+    <canvas id="bc" width="400" height="150"></canvas>
+  </div>
+  <canvas id="qr" width="200" height="200" style="display:none"></canvas><br/>
+  
+  <button id="g">Generar</button>
+  <button id="d">Descargar</button>
+  
+  <script>
+    window.onload = () => {
+      const t = document.getElementById("t"),
+            v = document.getElementById("v"),
+            g = document.getElementById("g"),
+            d = document.getElementById("d"),
+            bcContainer = document.getElementById("barcodeContainer"),
+            qr = document.getElementById("qr");
+
+      t.onchange = () => {
+        v.value = "";
+        if (t.value === "barcode") {
+          bcContainer.style.display = "block";
+          qr.style.display = "none";
+        } else {
+          bcContainer.style.display = "none";
+          qr.style.display = "block";
+        }
+      };
+
+      g.onclick = () => {
+        const val = v.value.trim().toUpperCase();
+        if (!val) {
+          alert("Por favor, escribe un código.");
+          return;
+        }
+
+        if (t.value === "barcode") {
+          // Validación CODE39: solo A-Z, 0-9, espacio, - . $ / + %
+          const code39Regex = /^[A-Z0-9 \-\.\$\/\+\%]+$/;
+          if (!code39Regex.test(val)) {
+            alert("ERROR: CODE39 solo admite A-Z, 0-9, espacio y - . $ / + %");
+            return;
+          }
+
+          bcContainer.style.display = "block";
+          qr.style.display = "none";
+
+          bcContainer.innerHTML = "";
+          const newCanvas = document.createElement("canvas");
+          newCanvas.width = 400;
+          newCanvas.height = 150;
+          bcContainer.appendChild(newCanvas);
+
+          try {
+            JsBarcode(newCanvas, val, {
+              format: "CODE39",
+              displayValue: true,
+              fontSize: 18,
+              height: 80,
+              margin: 10
+            });
+          } catch (e) {
+            console.error(e);
+            alert("Error generando Código de Barras: " + e);
+          }
+
+        } else {
+          bcContainer.style.display = "none";
+          qr.style.display = "block";
+          qr.width = 200;
+          qr.height = 200;
+          const ctx = qr.getContext("2d");
+          ctx.clearRect(0, 0, qr.width, qr.height);
+          QRCode.toCanvas(qr, val, {
+            width: 200,
+            margin: 2,
+            color: { dark: "#000", light: "#fff" }
+          }, e => {
+            if (e) {
+              console.error(e);
+              alert("Error generando QR: " + e);
+            }
+          });
+        }
+      };
+
+      d.onclick = () => {
+        const c = t.value === "barcode" ? bcContainer.querySelector("canvas") : qr;
+        if (!c) {
+          alert("No hay código generado para descargar.");
+          return;
+        }
+        const a = document.createElement("a");
+        a.download = t.value === "barcode" ? "codigo_barras.png" : "codigo_qr.png";
+        a.href = c.toDataURL("image/png");
+        a.click();
+      };
+    };
+
+    // Deshabilita herramientas de desarrollo
+    document.onkeydown = e => {
+      if (e.key === "F12" || (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key))) {
+        e.preventDefault();
+      }
+    };
+  </script>
+</body>
+</html>
