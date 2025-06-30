@@ -93,7 +93,7 @@
       };
 
       g.onclick = () => {
-        let val = v.value; // No usamos trim para no eliminar espacios intermedios
+        let val = v.value;
         if (!val.trim()) {
           alert("Por favor, escribe un código.");
           return;
@@ -111,6 +111,7 @@
           bc.style.display = "block";
           qr.style.display = "none";
 
+          // Limpiar canvas antes de dibujar nuevo código
           const ctx = bc.getContext("2d");
           ctx.clearRect(0, 0, bc.width, bc.height);
 
