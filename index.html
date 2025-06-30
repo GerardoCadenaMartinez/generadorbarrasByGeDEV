@@ -59,7 +59,7 @@
     <option value="barcode">Código Barras (CODE39)</option>
     <option value="qr">Código QR</option>
   </select><br/>
-  <input type="text" id="v" placeholder="Ingresa letras o números" autocomplete="off" autocorrect="off" autocapitalize="characters" /><br/>
+  <input type="text" id="v" placeholder="Ingresa letras o números" autocomplete="off" autocorrect="off" /><br/>
   
   <canvas id="bc" width="400" height="150"></canvas>
   <canvas id="qr" width="200" height="200" style="display:none"></canvas><br/>
@@ -75,6 +75,11 @@
             d = document.getElementById("d"),
             bc = document.getElementById("bc"),
             qr = document.getElementById("qr");
+
+      // Convierte a mayúsculas mientras escribes
+      v.addEventListener('input', () => {
+        v.value = v.value.toUpperCase();
+      });
 
       t.onchange = () => {
         v.value = "";
@@ -95,8 +100,7 @@
         }
 
         if (t.value === "barcode") {
-          val = val.toUpperCase();
-
+          // Ya es mayúscula por el input listener
           const code39Regex = /^[A-Z0-9 \-\.\$\/\+\%]+$/;
           if (!code39Regex.test(val)) {
             alert("ERROR: CODE39 solo admite A-Z, 0-9, espacio y - . $ / + %");
