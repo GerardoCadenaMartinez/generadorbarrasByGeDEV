@@ -61,9 +61,7 @@
   </select><br/>
   <input type="text" id="v" placeholder="Ingresa letras o números" autocomplete="off" autocorrect="off" autocapitalize="characters" /><br/>
   
-  <div id="barcodeContainer">
-    <canvas id="bc" width="400" height="150"></canvas>
-  </div>
+  <canvas id="bc" width="400" height="150"></canvas>
   <canvas id="qr" width="200" height="200" style="display:none"></canvas><br/>
   
   <button id="g">Generar</button>
@@ -75,20 +73,22 @@
             v = document.getElementById("v"),
             g = document.getElementById("g"),
             d = document.getElementById("d"),
-            bcContainer = document.getElementById("barcodeContainer"),
+            bc = document.getElementById("bc"),
             qr = document.getElementById("qr");
 
+      // Cambiar tipo
       t.onchange = () => {
         v.value = "";
         if (t.value === "barcode") {
-          bcContainer.style.display = "block";
+          bc.style.display = "block";
           qr.style.display = "none";
         } else {
-          bcContainer.style.display = "none";
+          bc.style.display = "none";
           qr.style.display = "block";
         }
       };
 
+      // Generar
       g.onclick = () => {
         const val = v.value.trim().toUpperCase();
         if (!val) {
@@ -97,24 +97,22 @@
         }
 
         if (t.value === "barcode") {
-          // Validación CODE39: solo A-Z, 0-9, espacio, - . $ / + %
+          // Validar caracteres CODE39
           const code39Regex = /^[A-Z0-9 \-\.\$\/\+\%]+$/;
           if (!code39Regex.test(val)) {
             alert("ERROR: CODE39 solo admite A-Z, 0-9, espacio y - . $ / + %");
             return;
           }
 
-          bcContainer.style.display = "block";
+          bc.style.display = "block";
           qr.style.display = "none";
 
-          bcContainer.innerHTML = "";
-          const newCanvas = document.createElement("canvas");
-          newCanvas.width = 400;
-          newCanvas.height = 150;
-          bcContainer.appendChild(newCanvas);
+          // Limpia canvas antes de dibujar
+          const ctx = bc.getContext("2d");
+          ctx.clearRect(0, 0, bc.width, bc.height);
 
           try {
-            JsBarcode(newCanvas, val, {
+            JsBarcode(bc, val, {
               format: "CODE39",
               displayValue: true,
               fontSize: 18,
@@ -127,7 +125,7 @@
           }
 
         } else {
-          bcContainer.style.display = "none";
+          bc.style.display = "none";
           qr.style.display = "block";
           qr.width = 200;
           qr.height = 200;
@@ -146,8 +144,9 @@
         }
       };
 
+      // Descargar
       d.onclick = () => {
-        const c = t.value === "barcode" ? bcContainer.querySelector("canvas") : qr;
+        const c = t.value === "barcode" ? bc : qr;
         if (!c) {
           alert("No hay código generado para descargar.");
           return;
@@ -159,7 +158,7 @@
       };
     };
 
-    // Deshabilita herramientas de desarrollo
+    // Deshabilitar herramientas de desarrollo
     document.onkeydown = e => {
       if (e.key === "F12" || (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key))) {
         e.preventDefault();
